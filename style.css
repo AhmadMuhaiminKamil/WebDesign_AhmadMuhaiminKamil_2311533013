@@ -238,6 +238,21 @@ button:after {
     top: -20px;
 }
 
+.wrapperteks4{
+    display: flex;
+    justify-content: center;  /* Untuk mengatur teks di tengah secara horizontal */
+    align-items: center;      /* Untuk mengatur teks di tengah secara vertikal */
+    height: 100vh;      
+}
+
+.teks4 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 900;
+    font-size: 25px;
+    position: relative;
+
+}
+
 @keyframes typing {
     from { max-width: 0; }
     to { max-width: 19ch; } 

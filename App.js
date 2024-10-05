@@ -43,6 +43,39 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    // Mencegah prompt default
+    e.preventDefault();
+    // Simpan event untuk dipicu nanti
+    deferredPrompt = e;
+    
+    // Tampilkan tombol install
+    const installButton = document.getElementById('install-button');
+    installButton.style.display = 'block'; // Tampilkan tombol
+});
+
+document.getElementById('install-button').addEventListener('click', (e) => {
+    // Sembunyikan tombol
+    const installButton = document.getElementById('install-button');
+    installButton.style.display = 'none';
+
+    // Tampilkan prompt install
+    deferredPrompt.prompt();
+    
+    // Tunggu respons dari pengguna
+    deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+            console.log('Pengguna menerima prompt A2HS');
+        } else {
+            console.log('Pengguna menolak prompt A2HS');
+        }
+        deferredPrompt = null; // Kosongkan variabel deferredPrompt
+    });
+});
+
+
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js').then((registration) => {
