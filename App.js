@@ -75,6 +75,17 @@ document.getElementById('install-button').addEventListener('click', (e) => {
     });
 });
 
+$.ajax({
+    url: 'offline.html',
+    success: function(data) {
+        // Hanya memuat halaman untuk caching, tidak perlu ditampilkan
+    },
+    error: function(error) {
+        console.error('Error loading offline.html:', error);
+    }
+});
+
+
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {

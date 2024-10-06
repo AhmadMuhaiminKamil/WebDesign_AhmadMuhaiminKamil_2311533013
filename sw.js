@@ -1,9 +1,7 @@
 const CACHE_NAME = 'my-site-cache-v1';
-const OFFLINE_URL = 'offline.html';  
-
 
 const urlsToCache = [
-    OFFLINE_URL,  
+    'offline.html',  
     'App.js',     
     'style.css',  
     'manifest.json',
@@ -15,50 +13,49 @@ const urlsToCache = [
     'https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js'
 ];
 
-
+// Event listener untuk meng-cache file selama proses instalasi service worker
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
             console.log('Caching offline page and essential files');
+            console.log('Caching:', urlsToCache); // Log urls yang sedang di-cache
             return cache.addAll(urlsToCache); 
         })
     );
 });
 
-
+// Event listener untuk menangani permintaan fetch
 self.addEventListener('fetch', (event) => {
-    
     if (event.request.mode === 'navigate') {
         event.respondWith(
             fetch(event.request)
             .then((response) => {
-                return response;
+                return response; // Kembalikan respons jika berhasil
             })
             .catch(() => {
-                
-                return caches.match(OFFLINE_URL);
+                // Jika gagal, kembalikan offline.html
+                return caches.match('offline.html');
             })
         );
     } else {
-
+        // Untuk permintaan lain, coba ambil dari cache terlebih dahulu
         event.respondWith(
             caches.match(event.request).then((response) => {
                 return response || fetch(event.request).then((networkResponse) => {
-                  
                     return caches.open(CACHE_NAME).then((cache) => {
                         cache.put(event.request, networkResponse.clone());
                         return networkResponse;
                     });
                 }).catch(() => {
-             
-               
+                    // Jika ada kesalahan, kembalikan offline.html sebagai fallback
+                    return caches.match('offline.html');
                 });
             })
         );
     }
 });
 
-
+// Event listener untuk menghapus cache lama saat service worker diaktifkan
 self.addEventListener('activate', (event) => {
     const cacheWhitelist = [CACHE_NAME];
     event.waitUntil(
